@@ -1,0 +1,75 @@
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+
+    environment:
+      POSTGRES_USER: employee_app
+      POSTGRES_PASSWORD: Password123
+      POSTGRES_DB: employee_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - employee-network
+
+  backend:
+    image: employee-backend:v1
+    container_name: employee-backend
+
+    restart: always
+
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - ./backend/.env
+
+    depends_on:
+      - postgres
+
+    networks:
+      - employee-network
+
+  frontend:
+    image: employee-frontend:v1
+    container_name: employee-frontend
+
+    restart: always
+
+    # Notice:
+    # We DO NOT expose port 3000 anymore.
+
+    depends_on:
+      - backend
+
+    networks:
+      - employee-network
+
+  nginx:
+    image: employee-nginx:v1
+    container_name: employee-nginx
+
+    restart: always
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - frontend
+      - backend
+
+    networks:
+      - employee-network
+
+volumes:
+  postgres_data:
+
+networks:
+  employee-network:
