@@ -38,10 +38,10 @@ services:
       - employee-network
 
   frontend:
-    image: employee-frontend:v1
-    container_name: employee-frontend
-
-    restart: always
+    image: employee-frontend:v2
+  container_name: employee-frontend
+  depends_on:
+    - backend
 
     # Notice:
     # We DO NOT expose port 3000 anymore.
@@ -52,18 +52,18 @@ services:
     networks:
       - employee-network
 
-  nginx:
-    image: employee-nginx:v1
-    container_name: employee-nginx
+#  nginx:
+#    image: employee-nginx:v1
+#    container_name: employee-nginx
 
-    restart: always
+ #   restart: always
 
-    ports:
-      - "80:80"
+  #  ports:
+   #   - "80:80"
 
-    depends_on:
-      - frontend
-      - backend
+ #   depends_on:
+  #    - frontend
+   #   - backend
 
     networks:
       - employee-network
